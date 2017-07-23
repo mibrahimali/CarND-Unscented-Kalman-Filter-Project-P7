@@ -107,7 +107,7 @@ public:
 
   void CalculateWeights();
   void AugmentedSigmaPoints(MatrixXd& Xsig_out);
-  void SigmaPointPrediction(MatrixXd& Xsig_out ,MatrixXd& Xsig_aug, double delta_t) ;
+  void SigmaPointPrediction(MatrixXd& Xsig_pred ,MatrixXd& Xsig_aug, double delta_t) ;
   void PredictMeanAndCovariance(VectorXd& x_out, MatrixXd& P_out);
 };
 

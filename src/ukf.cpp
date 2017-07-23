@@ -26,10 +26,10 @@ UKF::UKF() {
   P_ = MatrixXd(5, 5);
 
   // Process noise standard deviation longitudinal acceleration in m/s^2
-  std_a_ = 6;
+  std_a_ = 3;
 
   // Process noise standard deviation yaw acceleration in rad/s^2
-  std_yawdd_ = .5;
+  std_yawdd_ = 1;
 
   // Laser measurement noise standard deviation position1 in m
   std_laspx_ = 0.15;
@@ -97,9 +97,9 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
       */
       VectorXd measure_cart = tools.Polar2Cart(meas_package.raw_measurements_) ;
       x_ = VectorXd(5);
-      // x_ << measure_cart(0), measure_cart(1), measure_cart(2) , measure_cart(3), measure_cart(4);
+      x_ << measure_cart(0), measure_cart(1), measure_cart(2) , measure_cart(3), measure_cart(4);
       // don`t count on velocity information of first frame
-      x_ << measure_cart(0), measure_cart(1), 0 , 0, 0;
+      // x_ << measure_cart(0), measure_cart(1), 0 , 0, 0;
     }
     else if (meas_package.sensor_type_ == MeasurementPackage::LASER) {
       /**
@@ -120,6 +120,9 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
   float dt = (meas_package.timestamp_ - time_us_) / 1000000.0;	//dt - expressed in seconds
 	time_us_ = meas_package.timestamp_;
   Prediction(dt);
+  /*****************************************************************************
+   *  Update
+   ****************************************************************************/
   if (meas_package.sensor_type_ == MeasurementPackage::RADAR && use_radar_) {
     // // Radar updates
     UpdateRadar(meas_package);
@@ -127,10 +130,6 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
     // Laser updates
     UpdateLidar(meas_package);
   }
-
-  // print the output
-  cout << "x_ = " << x_ << endl;
-  cout << "P_ = " << P_ << endl;
 }
 
 /**
@@ -325,10 +324,10 @@ void UKF::AugmentedSigmaPoints(MatrixXd& Xsig_out) {
 
 }
 
-void UKF::SigmaPointPrediction(MatrixXd& Xsig_out ,MatrixXd& Xsig_aug, double delta_t) {
+void UKF::SigmaPointPrediction(MatrixXd& Xsig_pred ,MatrixXd& Xsig_aug, double delta_t) {
 
   //create matrix with predicted sigma points as columns
-  Xsig_out = MatrixXd(n_x_, 2 * n_aug_ + 1);
+  Xsig_pred = MatrixXd(n_x_, 2 * n_aug_ + 1);
 
   //predict sigma points
   for (int i = 0; i< 2*n_aug_+1; i++)
@@ -368,11 +367,11 @@ void UKF::SigmaPointPrediction(MatrixXd& Xsig_out ,MatrixXd& Xsig_aug, double de
     yawd_p = yawd_p + nu_yawdd*delta_t;
 
     //write predicted sigma point into right column
-    Xsig_out(0,i) = px_p;
-    Xsig_out(1,i) = py_p;
-    Xsig_out(2,i) = v_p;
-    Xsig_out(3,i) = yaw_p;
-    Xsig_out(4,i) = yawd_p;
+    Xsig_pred(0,i) = px_p;
+    Xsig_pred(1,i) = py_p;
+    Xsig_pred(2,i) = v_p;
+    Xsig_pred(3,i) = yaw_p;
+    Xsig_pred(4,i) = yawd_p;
   }
 }
 
