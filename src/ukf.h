@@ -2,6 +2,7 @@
 #define UKF_H
 
 #include "measurement_package.h"
+#include "tools.h"
 #include "Eigen/Dense"
 #include <vector>
 #include <string>
@@ -66,7 +67,8 @@ public:
 
   ///* Sigma point spreading parameter
   double lambda_;
-
+  ///* used to space converters
+  Tools tools;
 
   /**
    * Constructor
@@ -102,6 +104,11 @@ public:
    * @param meas_package The measurement at k+1
    */
   void UpdateRadar(MeasurementPackage meas_package);
+
+  void CalculateWeights();
+  void AugmentedSigmaPoints(MatrixXd& Xsig_out);
+  void SigmaPointPrediction(MatrixXd& Xsig_out ,MatrixXd& Xsig_aug, double delta_t) ;
+  void PredictMeanAndCovariance(VectorXd& x_out, MatrixXd& P_out);
 };
 
 #endif /* UKF_H */

@@ -23,7 +23,15 @@ public:
   * A helper method to calculate RMSE.
   */
   VectorXd CalculateRMSE(const vector<VectorXd> &estimations, const vector<VectorXd> &ground_truth);
+    /**
+  * A helper method to convert cartesian to polar co-ordinates 
+  **/
+  VectorXd Cart2Polar(const VectorXd& x);
 
+  /**
+  * A helper method to convert polar to cartesian  co-ordinates 
+  **/
+  VectorXd Polar2Cart(const VectorXd& x);
 };
 
 #endif /* TOOLS_H_ */
